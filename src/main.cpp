@@ -1,34 +1,72 @@
+// #include <Arduino.h>
+// #include <ToroEspSocketServer.h>
+
+// TES_Server tesServer;
+
+// void onMsg(uint index, String msg)
+// {
+//   Serial.printf("From client identifying with index: %d, got ==> %s\n", index, msg);
+// }
+
+// void onDemoEvent(uint index, String msg)
+// {
+//   Serial.printf("Client %d sayed: \"%s\"\n", index, msg);
+//   tesServer.sendMsg("clientGroup", index, "msgTag", "demo server response");
+// }
+
+// void setup()
+// {
+//   Serial.begin(9600);
+
+//   uint maxDeviceConnected = 8;
+//   tesServer.start_wifi("apName", "apPassword", maxDeviceConnected);
+//   tesServer.start_ws(81);
+
+//   tesServer.addUniversalListener(onMsg);
+//   tesServer.addEventListener("eventTag", onDemoEvent);
+// }
+
+// void loop()
+// {
+//   tesServer.loop();
+// }
+
+// =============================================
+
 #include <Arduino.h>
-#include <ToroEspSocketServer.h>
+#include <ToroEspSocketClient.h>
 
-TES_Server test;
+TES_Client tesClient("deviceGroup");
 
-// TODO: In WebSocketServer.h and .cpp ==> Make MaxClientConnections form constant to variable
-
-void testEvent(String msg)
+void onEvent(String msg)
 {
-  Serial.printf("Got ==> %s\n", msg);
+	Serial.printf("Got from server ==> %s\n", msg);
 }
 
-void whenGreeted(String msg)
+void onDemoEvent(String msg)
 {
-  Serial.printf("Client sayed: \"%s\" to me!!\n", msg);
+	Serial.printf("Demo event got activated, msg ==> %s\n", msg);
 }
 
 void setup()
 {
-  Serial.begin(9600);
+	Serial.begin(9600);
 
-  test.start_wifi("TEST", "00000000", 8);
-  test.start_ws(81, 7000, 3000, 1);
+	tesClient.connect_to_wifi("apName", "apPassword");
+	tesClient.start_ws("192.168.4.1", 81);
 
-  test.addUniversalListener(testEvent);
-  test.addEventListener("grt", whenGreeted);
+	tesClient.addUniversalListener(onEvent);
+	tesClient.addEventListener("msgTag", onDemoEvent);
 }
 
+ulong auxMillis = 0;
 void loop()
 {
-  test.loop();
-  if (millis() % 1000 == 0)
-    test.sendMsg("tag", 0, "color", "red");
+	tesClient.loop();
+
+	if (millis() > auxMillis + 2000) // Sending demo messages every two seconds
+	{
+		auxMillis = millis();
+		tesClient.sendMsg("eventTag", "Demo client message");
+	}
 }

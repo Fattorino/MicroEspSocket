@@ -87,15 +87,15 @@ void TES_Server::loop()
     _ws->loop();
 }
 
-void TES_Server::addUniversalListener(TES_Event event)
+void TES_Server::addUniversalListener(TES_SEvent event)
 {
     _universalEvent = event;
     _universalEventToggle = true;
 }
 
-void TES_Server::addEventListener(String tag, TES_Event event)
+void TES_Server::addEventListener(String tag, TES_SEvent event)
 {
-    _eventList.insert(std::pair<String, TES_Event>(tag, event));
+    _eventList.insert(std::pair<String, TES_SEvent>(tag, event));
 }
 
 void TES_Server::sendMsg(String group, uint index, String tag, std::vector<String> msg)

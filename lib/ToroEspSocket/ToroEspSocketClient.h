@@ -9,7 +9,7 @@
 #include <WiFiClientSecure.h>
 #include "WebSocketBase/WebSocketsClient.h"
 
-typedef std::function<void(String msg)> TES_Event;
+typedef std::function<void(String msg)> TES_CEvent;
 
 class TES_Client
 {
@@ -21,8 +21,8 @@ private:
     WebSocketsClient *_ws;
     uint _rconnectDelta;
 
-    std::map<String, TES_Event> _eventList;
-    TES_Event _universalEvent;
+    std::map<String, TES_CEvent> _eventList;
+    TES_CEvent _universalEvent;
     bool _universalEventToggle = false;
 
     String _decodeTag(uint8_t *payload, size_t length);
@@ -39,8 +39,8 @@ public:
     void start_ws(String ip, uint16_t port, uint rconnectDelta);
     void loop();
 
-    void addUniversalListener(TES_Event event);
-    void addEventListener(String tag, TES_Event event);
+    void addUniversalListener(TES_CEvent event);
+    void addEventListener(String tag, TES_CEvent event);
 
     void sendMsg(String tag, std::vector<String> msg);
     void sendMsg(String tag, String msg);

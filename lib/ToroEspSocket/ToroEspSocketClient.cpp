@@ -57,15 +57,15 @@ void TES_Client::loop()
     _ws->loop();
 }
 
-void TES_Client::addUniversalListener(TES_Event event)
+void TES_Client::addUniversalListener(TES_CEvent event)
 {
     _universalEvent = event;
     _universalEventToggle = true;
 }
 
-void TES_Client::addEventListener(String tag, TES_Event event)
+void TES_Client::addEventListener(String tag, TES_CEvent event)
 {
-    _eventList.insert(std::pair<String, TES_Event>(tag, event));
+    _eventList.insert(std::pair<String, TES_CEvent>(tag, event));
 }
 
 void TES_Client::sendMsg(String tag, std::vector<String> msg)
