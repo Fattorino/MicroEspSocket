@@ -1,11 +1,27 @@
 #include "ToroEspSocketServer.h"
 
+int _decodeIndex(uint8_t *payload, size_t length)
+{
+    String msg(payload, length);
+    uint iEnd = msg.indexOf(">") + 1;
+    if (iEnd > 0)
+        return msg.substring(0, iEnd).toInt();
+    else
+        return -1;
+}
+
 String TES_Server::_decodeTag(uint8_t *payload, size_t length)
 {
     String msg(payload, length);
-    uint index = msg.indexOf("=");
-    if (index > 0)
-        return msg.substring(0, index);
+    uint iEnd = msg.indexOf("=");
+    uint iStart = msg.indexOf(">") + 1;
+    if (iEnd > 0)
+    {
+        if (iStart > 0)
+            return msg.substring(iStart, iEnd);
+        else
+            return msg.substring(0, iEnd);
+    }
     else
         return msg;
 }
@@ -20,12 +36,12 @@ String TES_Server::_decodeMsg(uint8_t *payload, size_t length)
         return msg;
 }
 
-void TES_Server::start_wifi(String name, String pw, uint maxc)
+void TES_Server::start_wifi(String ssid, String pw, uint maxc)
 {
     _maxConnections = maxc;
 
     WiFi.mode(WIFI_AP);
-    WiFi.softAP(name.c_str(), pw.c_str(), 4, 0, maxc);
+    WiFi.softAP(ssid.c_str(), pw.c_str(), 4, 0, maxc);
     delay(500);
 
     // ANDROID 10 WORKAROUND==================================================
@@ -168,7 +184,8 @@ uint TES_Server::connectedDevices(String group)
     uint count = 0;
     for (auto it = _cDevices.begin(); it != _cDevices.end(); it++)
     {
-        count++;
+        if (it->first.group == group)
+            count++;
     }
     return count;
 }

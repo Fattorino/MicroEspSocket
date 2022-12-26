@@ -39,6 +39,7 @@ private:
 
     std::map<DeviceUID, uint8_t> _cDevices;
 
+    int _decodeIndex(uint8_t *payload, size_t length);
     String _decodeTag(uint8_t *payload, size_t length);
     String _decodeMsg(uint8_t *payload, size_t length);
 
@@ -48,7 +49,7 @@ public:
     TES_Server() {}
     ~TES_Server() { delete _ws; }
 
-    void start_wifi(String name, String pw, uint maxc);
+    void start_wifi(String ssid, String pw, uint maxc);
 
     IPAddress getIP();
 
@@ -66,9 +67,10 @@ public:
     void broadcastMsg(String tag, std::vector<String> msg);
     void broadcastMsg(String tag, String msg);
 
+    void regroupDevice(DeviceUID oulUID, DeviceUID newUID);
+
     uint connectedDevices(String group);
     uint connectedDevices();
-
     void pingDelta(uint pingDelta);
     uint pingDelta();
     void pingWait(uint pingWait);
@@ -101,6 +103,8 @@ inline void _eventHandler(TES_Server *th, uint8_t num, WStype_t type, uint8_t *p
         {
             uint8_t i = th->_cDevices.size();
             th->_cDevices.insert(std::pair<DeviceUID, uint8_t>(DeviceUID{msg, i}, num));
+            uint index = th->connectedDevices(msg);
+            th->_ws->sendTXT(num, "InDeX=" + String(index));
             break;
         }
 
