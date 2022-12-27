@@ -95,9 +95,6 @@ inline void _eventHandler(TES_Server *th, uint8_t num, WStype_t type, uint8_t *p
         String msg = th->_decodeMsg(payload, length);
         int index = th->_decodeIndex(payload, length);
 
-        Serial.print("AAAAAA ==> ");
-        Serial.println(String(payload, length));
-
         if (th->_universalEventToggle)
         {
             th->_universalEvent(index, msg);
@@ -105,7 +102,6 @@ inline void _eventHandler(TES_Server *th, uint8_t num, WStype_t type, uint8_t *p
 
         if (tag == "IdEnTiFiEr")
         {
-            // uint8_t i = th->_cDevices.size();
             uint index = th->connectedDevices(msg);
             th->_cDevices.insert(std::pair<DeviceUID, uint8_t>(DeviceUID{msg, index}, num));
             th->_ws->sendTXT(num, "InDeX=" + String(index));
