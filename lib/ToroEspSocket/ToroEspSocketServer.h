@@ -9,7 +9,7 @@
 #include <esp_wifi.h>
 #include "WebSocketBase/WebSocketsServer.h"
 
-typedef std::function<void(uint index, String msg)> TES_SEvent;
+typedef std::function<void(int index, String msg)> TES_SEvent;
 
 struct DeviceUID
 {
@@ -85,7 +85,7 @@ inline void _eventHandler(TES_Server *th, uint8_t num, WStype_t type, uint8_t *p
     {
     case WStype_DISCONNECTED:
     {
-        // TODO
+        // TODO: Handle client disconnected
     }
     break;
 
@@ -93,7 +93,10 @@ inline void _eventHandler(TES_Server *th, uint8_t num, WStype_t type, uint8_t *p
     {
         String tag = th->_decodeTag(payload, length);
         String msg = th->_decodeMsg(payload, length);
-        uint index = th->_decodeIndex(payload, length);
+        int index = th->_decodeIndex(payload, length);
+
+        Serial.print("AAAAAA ==> ");
+        Serial.println(String(payload, length));
 
         if (th->_universalEventToggle)
         {
@@ -102,9 +105,9 @@ inline void _eventHandler(TES_Server *th, uint8_t num, WStype_t type, uint8_t *p
 
         if (tag == "IdEnTiFiEr")
         {
-            uint8_t i = th->_cDevices.size();
-            th->_cDevices.insert(std::pair<DeviceUID, uint8_t>(DeviceUID{msg, i}, num));
+            // uint8_t i = th->_cDevices.size();
             uint index = th->connectedDevices(msg);
+            th->_cDevices.insert(std::pair<DeviceUID, uint8_t>(DeviceUID{msg, index}, num));
             th->_ws->sendTXT(num, "InDeX=" + String(index));
             break;
         }

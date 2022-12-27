@@ -1,6 +1,6 @@
 #include "ToroEspSocketServer.h"
 
-int _decodeIndex(uint8_t *payload, size_t length)
+int TES_Server::_decodeIndex(uint8_t *payload, size_t length)
 {
     String msg(payload, length);
     uint iEnd = msg.indexOf(">") + 1;
@@ -172,6 +172,7 @@ void TES_Server::broadcastMsg(String tag, std::vector<String> msg)
 void TES_Server::broadcastMsg(String tag, String msg)
 {
     String payload = tag + "=" + msg;
+
     for (auto it = _cDevices.begin(); it != _cDevices.end(); it++)
     {
         uint8_t num = it->second;

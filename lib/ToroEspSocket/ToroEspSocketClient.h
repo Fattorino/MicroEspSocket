@@ -48,14 +48,14 @@ public:
     void rconnectDelta(uint rconnectDelta);
 };
 
-void _eventHandler(TES_Client *th, WStype_t type, uint8_t *payload, size_t length)
+inline void _eventHandler(TES_Client *th, WStype_t type, uint8_t *payload, size_t length)
 {
 
     switch (type)
     {
     case WStype_CONNECTED:
     {
-        th->_ws->sendTXT("IdEnTiFiEr" + th->_group);
+        th->_ws->sendTXT("IdEnTiFiEr=" + th->_group);
     }
     break;
 

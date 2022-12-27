@@ -27,11 +27,11 @@ TES_Client::TES_Client(String group)
 
 void TES_Client::connect_to_wifi(String ssid, String pw)
 {
-    WiFi.begin("GPST", "00000000");
-    while (WiFi.status() != WL_CONNECTED)
-    {
-        delay(60);
-    }
+    WiFi.begin(ssid.c_str(), pw.c_str());
+    // while (WiFi.status() != WL_CONNECTED)
+    // {
+    //     delay(100);
+    // }
 }
 
 void TES_Client::start_ws(String ip, uint16_t port)
