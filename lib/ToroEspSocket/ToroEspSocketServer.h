@@ -50,9 +50,6 @@ public:
     ~TES_Server() { delete _ws; }
 
     void start_wifi(String ssid, String pw, uint maxc);
-
-    IPAddress getIP();
-
     void start_ws(uint16_t port);
     void start_ws(uint16_t port, uint pingDelta, uint pingWait, uint failsToDisc);
     void loop();
@@ -69,6 +66,7 @@ public:
 
     void regroupDevice(DeviceUID oulUID, DeviceUID newUID);
 
+    IPAddress getIP();
     uint connectedDevices(String group);
     uint connectedDevices();
     void pingDelta(uint pingDelta);
