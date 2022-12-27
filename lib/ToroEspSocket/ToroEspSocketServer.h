@@ -9,7 +9,7 @@
 #include <esp_wifi.h>
 #include "WebSocketBase/WebSocketsServer.h"
 
-typedef std::function<void(String msg)> TES_Event;
+typedef std::function<void(int index, String msg)> TES_SEvent;
 
 struct DeviceUID
 {
@@ -33,12 +33,13 @@ private:
     uint _pingWait = 0;
     uint _failsToDisc = 0;
 
-    std::map<String, TES_Event> _eventList;
-    TES_Event _universalEvent;
+    std::map<String, TES_SEvent> _eventList;
+    TES_SEvent _universalEvent;
     bool _universalEventToggle = false;
 
     std::map<DeviceUID, uint8_t> _cDevices;
 
+    int _decodeIndex(uint8_t *payload, size_t length);
     String _decodeTag(uint8_t *payload, size_t length);
     String _decodeMsg(uint8_t *payload, size_t length);
 
@@ -48,7 +49,7 @@ public:
     TES_Server() {}
     ~TES_Server() { delete _ws; }
 
-    void start_wifi(String name, String pw, uint maxc);
+    void start_wifi(String ssid, String pw, uint maxc);
 
     IPAddress getIP();
 
@@ -56,8 +57,8 @@ public:
     void start_ws(uint16_t port, uint pingDelta, uint pingWait, uint failsToDisc);
     void loop();
 
-    void addUniversalListener(TES_Event event);
-    void addEventListener(String tag, TES_Event event);
+    void addUniversalListener(TES_SEvent event);
+    void addEventListener(String tag, TES_SEvent event);
 
     void sendMsg(String group, uint index, String tag, std::vector<String> msg);
     void sendMsg(String group, uint index, String tag, String msg);
@@ -66,9 +67,10 @@ public:
     void broadcastMsg(String tag, std::vector<String> msg);
     void broadcastMsg(String tag, String msg);
 
+    void regroupDevice(DeviceUID oulUID, DeviceUID newUID);
+
     uint connectedDevices(String group);
     uint connectedDevices();
-
     void pingDelta(uint pingDelta);
     uint pingDelta();
     void pingWait(uint pingWait);
@@ -83,7 +85,7 @@ inline void _eventHandler(TES_Server *th, uint8_t num, WStype_t type, uint8_t *p
     {
     case WStype_DISCONNECTED:
     {
-        // TODO
+        // TODO: Handle client disconnected
     }
     break;
 
@@ -91,22 +93,24 @@ inline void _eventHandler(TES_Server *th, uint8_t num, WStype_t type, uint8_t *p
     {
         String tag = th->_decodeTag(payload, length);
         String msg = th->_decodeMsg(payload, length);
+        int index = th->_decodeIndex(payload, length);
 
         if (th->_universalEventToggle)
         {
-            th->_universalEvent(msg);
+            th->_universalEvent(index, msg);
         }
 
         if (tag == "IdEnTiFiEr")
         {
-            uint8_t i = th->_cDevices.size();
-            th->_cDevices.insert(std::pair<DeviceUID, uint8_t>(DeviceUID{msg, i}, num));
+            uint index = th->connectedDevices(msg);
+            th->_cDevices.insert(std::pair<DeviceUID, uint8_t>(DeviceUID{msg, index}, num));
+            th->_ws->sendTXT(num, "InDeX=" + String(index));
             break;
         }
 
         auto it = th->_eventList.find(tag);
         if (it != th->_eventList.end())
-            it->second(msg);
+            it->second(index, msg);
     }
     break;
 

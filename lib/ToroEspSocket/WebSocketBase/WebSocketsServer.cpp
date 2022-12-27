@@ -76,7 +76,11 @@ WebSocketsServer::~WebSocketsServer()
  */
 void WebSocketsServerCore::begin(void)
 {
-    _clients.reserve(_websocketMaxClient);
+    WSclient_t defaultClient;
+    for (int i = 0; i < _websocketMaxClient; i++)
+    {
+        _clients.push_back(defaultClient);
+    }
     // adjust clients storage:
     // _clients[i]'s constructor are already called,
     // all its members are initialized to their default value,
