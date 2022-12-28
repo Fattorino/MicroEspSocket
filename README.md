@@ -2,10 +2,10 @@
 
 
 # ToroEspSocket
->**All-in-one web-socket library for the ESP32**.
->
->ToroEspSocket is based on a modified version of [arduinoWebSockets](https://github.com/Links2004/arduinoWebSockets).
->The library manages both client ```TES_Client``` and server ```TES_Server```.
+**All-in-one web-socket library for the ESP32**.
+
+ToroEspSocket is based on a modified version of [arduinoWebSockets](https://github.com/Links2004/arduinoWebSockets). \
+The library manages both client ```TES_Client``` and server ```TES_Server```.
 
 ## Features
 - Automatic management of connected clients
@@ -98,7 +98,7 @@ void loop()
 
 &nbsp;
 
-> ## Recommendations
-> To learn more about: the group system used to manage clients, the overall working idea of the library and for a detailed explanation of every function please refer to the wiki
+## Recommendations
+To learn more about: the group system used to manage clients, the overall working idea of the library and for a detailed explanation of every function please refer to the wiki
 
 ***Wiki coming soon!***
