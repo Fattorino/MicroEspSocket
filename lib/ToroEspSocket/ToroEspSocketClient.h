@@ -77,7 +77,7 @@ inline void _eventHandler(TES_Client *th, WStype_t type, uint8_t *payload, size_
 
         if (tag == "ReGrOuP")
         {
-            // TODO: Set new stuff
+            th->_group = msg;
             break;
         }
 

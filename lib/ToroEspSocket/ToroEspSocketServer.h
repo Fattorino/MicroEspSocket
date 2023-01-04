@@ -64,7 +64,7 @@ public:
     void broadcastMsg(String tag, std::vector<String> msg);
     void broadcastMsg(String tag, String msg);
 
-    void regroupDevice(DeviceUID oulUID, DeviceUID newUID);
+    void regroupDevice(DeviceUID device, String newGroup);
 
     IPAddress getIP();
     uint connectedDevices(String group);

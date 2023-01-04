@@ -58,8 +58,6 @@ void TES_Server::start_wifi(String ssid, String pw, uint maxc)
     _myIP = WiFi.softAPIP();
 }
 
-IPAddress TES_Server::getIP() { return _myIP; }
-
 void TES_Server::start_ws(uint16_t port)
 {
     _port = port;
@@ -179,6 +177,19 @@ void TES_Server::broadcastMsg(String tag, String msg)
         _ws->sendTXT(num, payload);
     }
 }
+
+void TES_Server::regroupDevice(DeviceUID device, String newGroup)
+{
+    auto deviceIt = _cDevices.find(device);
+    uint8_t num = deviceIt->second;
+    uint index = connectedDevices(newGroup);
+    _cDevices.erase(deviceIt);
+    _cDevices.insert(std::pair<DeviceUID, uint8_t>(DeviceUID{newGroup, index}, num));
+    _ws->sendTXT(num, "ReGrOuP=" + newGroup);
+    _ws->sendTXT(num, "InDeX=" + String(index));
+}
+
+IPAddress TES_Server::getIP() { return _myIP; }
 
 uint TES_Server::connectedDevices(String group)
 {
