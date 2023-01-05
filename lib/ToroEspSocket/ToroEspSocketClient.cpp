@@ -23,6 +23,7 @@ String TES_Client::_decodeMsg(uint8_t *payload, size_t length)
 TES_Client::TES_Client(String group)
 {
     _group = group;
+    _isConnected = false;
 }
 
 void TES_Client::connect_to_wifi(String ssid, String pw)
@@ -91,3 +92,7 @@ void TES_Client::rconnectDelta(uint rconnectDelta)
     _rconnectDelta = rconnectDelta;
     _ws->setReconnectInterval(rconnectDelta);
 }
+
+uint TES_Client::rconnectDelta() { return _rconnectDelta; }
+
+bool TES_Client::connected() { return _isConnected; }

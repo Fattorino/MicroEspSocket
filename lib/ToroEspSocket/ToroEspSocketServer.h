@@ -20,6 +20,8 @@ struct DeviceUID
     {
         return (group.charAt(0) * 100 + group.charAt(1) * 10 + index) < (cmp.group.charAt(0) * 100 + cmp.group.charAt(1) * 10 + cmp.index);
     }
+
+    void setIndex(uint nIndex) { index = nIndex; }
 };
 
 class TES_Server
@@ -75,6 +77,8 @@ public:
     uint pingWait();
     void failsToDisc(uint failsToDisc);
     uint failsToDisc();
+
+    void printList();
 };
 
 inline void _eventHandler(TES_Server *th, uint8_t num, WStype_t type, uint8_t *payload, size_t length)
@@ -83,7 +87,38 @@ inline void _eventHandler(TES_Server *th, uint8_t num, WStype_t type, uint8_t *p
     {
     case WStype_DISCONNECTED:
     {
-        // TODO: Handle client disconnected
+        auto it = th->_cDevices.begin();
+        for (; it != th->_cDevices.end() && it->second != num; it++)
+        {
+        }
+        if (it == th->_cDevices.end())
+            break;
+
+        String dGroup = it->first.group;
+        uint dIndex = it->first.index;
+        std::vector<std::map<DeviceUID, uint8_t>::iterator> toDelete;
+        std::vector<uint8_t> toReAddNums;
+
+        toDelete.push_back(it);
+        it = th->_cDevices.begin();
+        for (; it != th->_cDevices.end(); it++)
+        {
+            if (it->first.group == dGroup && it->first.index > dIndex)
+            {
+                toDelete.push_back(it);
+                toReAddNums.push_back(it->second);
+            }
+        }
+        for (std::map<DeviceUID, uint8_t>::iterator &dIt : toDelete)
+        {
+            th->_cDevices.erase(dIt);
+        }
+
+        for (int i = 0; i < toReAddNums.size(); i++)
+        {
+            th->_cDevices.insert(std::pair<DeviceUID, uint8_t>(DeviceUID{dGroup, dIndex + i}, toReAddNums[i]));
+            th->_ws->sendTXT(toReAddNums[i], "InDeX=" + String(dIndex + i));
+        }
     }
     break;
 

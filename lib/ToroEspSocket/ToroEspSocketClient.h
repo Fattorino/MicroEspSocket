@@ -20,6 +20,7 @@ private:
     uint _index;
     WebSocketsClient *_ws;
     uint _rconnectDelta;
+    bool _isConnected;
 
     std::map<String, TES_CEvent> _eventList;
     TES_CEvent _universalEvent;
@@ -46,6 +47,8 @@ public:
     void sendMsg(String tag, String msg);
 
     void rconnectDelta(uint rconnectDelta);
+    uint rconnectDelta();
+    bool connected();
 };
 
 inline void _eventHandler(TES_Client *th, WStype_t type, uint8_t *payload, size_t length)
@@ -56,6 +59,13 @@ inline void _eventHandler(TES_Client *th, WStype_t type, uint8_t *payload, size_
     case WStype_CONNECTED:
     {
         th->_ws->sendTXT("IdEnTiFiEr=" + th->_group);
+        th->_isConnected = true;
+    }
+    break;
+
+    case WStype_DISCONNECTED:
+    {
+        th->_isConnected = false;
     }
     break;
 
