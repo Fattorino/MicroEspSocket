@@ -27,10 +27,11 @@ void loop()
 {
 	tesServer.loop();
 
-	if (millis() > auxMillis + 5000) // Sending demo messages every five seconds
+	if (millis() > auxMillis + 2000)
 	{
 		auxMillis = millis();
-		tesServer.broadcastMsg("demoEvent", "Demo message to all clients");
+		tesServer.sendMsg("clientGroup", 0, "demoEvent", "You are number ZERO");
+		tesServer.printList();
 	}
 }
 

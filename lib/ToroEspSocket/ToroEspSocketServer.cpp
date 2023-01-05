@@ -58,8 +58,6 @@ void TES_Server::start_wifi(String ssid, String pw, uint maxc)
     _myIP = WiFi.softAPIP();
 }
 
-IPAddress TES_Server::getIP() { return _myIP; }
-
 void TES_Server::start_ws(uint16_t port)
 {
     _port = port;
@@ -180,6 +178,21 @@ void TES_Server::broadcastMsg(String tag, String msg)
     }
 }
 
+void TES_Server::regroupDevice(DeviceUID device, String newGroup)
+{
+    auto deviceIt = _cDevices.find(device);
+    uint8_t num = deviceIt->second;
+    uint index = connectedDevices(newGroup);
+
+    _cDevices.erase(deviceIt);
+    _cDevices.insert(std::pair<DeviceUID, uint8_t>(DeviceUID{newGroup, index}, num));
+
+    _ws->sendTXT(num, "ReGrOuP=" + newGroup);
+    _ws->sendTXT(num, "InDeX=" + String(index));
+}
+
+IPAddress TES_Server::getIP() { return _myIP; }
+
 uint TES_Server::connectedDevices(String group)
 {
     uint count = 0;
@@ -219,3 +232,18 @@ void TES_Server::failsToDisc(uint failsToDisc)
 }
 
 uint TES_Server::failsToDisc() { return _failsToDisc; }
+
+void TES_Server::printList()
+{
+    Serial.println("=========");
+    for (auto it = _cDevices.begin(); it != _cDevices.end(); it++)
+    {
+        Serial.print("Device: ");
+        Serial.print(it->first.group);
+        Serial.print(", ");
+        Serial.print(it->first.index);
+        Serial.print(" ==> ");
+        Serial.println(it->second);
+    }
+    Serial.println("=========\n");
+}
