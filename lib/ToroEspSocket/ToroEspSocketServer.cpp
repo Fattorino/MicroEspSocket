@@ -96,6 +96,18 @@ void TES_Server::addEventListener(String tag, TES_SEvent event)
     _eventList.insert(std::pair<String, TES_SEvent>(tag, event));
 }
 
+void TES_Server::addOnConnectListener(TES_SEvent event)
+{
+    _connectEvent = event;
+    _connectEventToggle = true;
+}
+
+void TES_Server::addOnDisconnectListener(TES_SEvent event)
+{
+    _disconnectEvent = event;
+    _disconnectEventToggle = true;
+}
+
 void TES_Server::sendMsg(String group, uint index, String tag, std::vector<String> msg)
 {
     auto it = _cDevices.find(DeviceUID{group, index});

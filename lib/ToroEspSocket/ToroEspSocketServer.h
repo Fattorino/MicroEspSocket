@@ -38,6 +38,10 @@ private:
     std::map<String, TES_SEvent> _eventList;
     TES_SEvent _universalEvent;
     bool _universalEventToggle = false;
+    TES_SEvent _connectEvent;
+    bool _connectEventToggle = false;
+    TES_SEvent _disconnectEvent;
+    bool _disconnectEventToggle = false;
 
     std::map<DeviceUID, uint8_t> _cDevices;
 
@@ -58,6 +62,8 @@ public:
 
     void addUniversalListener(TES_SEvent event);
     void addEventListener(String tag, TES_SEvent event);
+    void addOnConnectListener(TES_SEvent event);
+    void addOnDisconnectListener(TES_SEvent event);
 
     void sendMsg(String group, uint index, String tag, std::vector<String> msg);
     void sendMsg(String group, uint index, String tag, String msg);
@@ -118,6 +124,20 @@ inline void _eventHandler(TES_Server *th, uint8_t num, WStype_t type, uint8_t *p
         {
             th->_cDevices.insert(std::pair<DeviceUID, uint8_t>(DeviceUID{dGroup, dIndex + i}, toReAddNums[i]));
             th->_ws->sendTXT(toReAddNums[i], "InDeX=" + String(dIndex + i));
+        }
+
+        if (th->_disconnectEventToggle)
+        {
+            th->_disconnectEvent((int)num, String(payload, length));
+        }
+    }
+    break;
+
+    case WStype_CONNECTED:
+    {
+        if (th->_connectEventToggle)
+        {
+            th->_connectEvent((int)num, String(payload, length));
         }
     }
     break;
