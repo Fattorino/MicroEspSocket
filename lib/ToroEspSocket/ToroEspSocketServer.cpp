@@ -108,6 +108,12 @@ void TES_Server::addOnDisconnectListener(TES_SEvent event)
     _disconnectEventToggle = true;
 }
 
+void TES_Server::addOnIdentificationListener(TES_SEvent event)
+{
+    _identifyEvent = event;
+    _identifyEventToggle = true;
+}
+
 void TES_Server::sendMsg(String group, uint index, String tag, std::vector<String> msg)
 {
     auto it = _cDevices.find(DeviceUID{group, index});
@@ -194,7 +200,7 @@ void TES_Server::regroupDevice(DeviceUID device, String newGroup)
 {
     auto deviceIt = _cDevices.find(device);
     uint8_t num = deviceIt->second;
-    uint index = connectedDevices(newGroup);
+    uint index = getConnectedDevices(newGroup);
 
     _cDevices.erase(deviceIt);
     _cDevices.insert(std::pair<DeviceUID, uint8_t>(DeviceUID{newGroup, index}, num));
@@ -205,7 +211,7 @@ void TES_Server::regroupDevice(DeviceUID device, String newGroup)
 
 IPAddress TES_Server::getIP() { return _myIP; }
 
-uint TES_Server::connectedDevices(String group)
+uint TES_Server::getConnectedDevices(String group)
 {
     uint count = 0;
     for (auto it = _cDevices.begin(); it != _cDevices.end(); it++)
@@ -216,34 +222,34 @@ uint TES_Server::connectedDevices(String group)
     return count;
 }
 
-uint TES_Server::connectedDevices() { return _cDevices.size(); }
+uint TES_Server::getConnectedDevices() { return _cDevices.size(); }
 
-void TES_Server::pingDelta(uint pingDelta)
+void TES_Server::setPingDelta(uint pingDelta)
 {
     _pingDelta = pingDelta;
     if (_pingDelta > 0 && _pingWait > 0 && _failsToDisc > 0)
         _ws->enableHeartbeat(_pingDelta, _pingWait, _failsToDisc);
 }
 
-uint TES_Server::pingDelta() { return _pingDelta; }
+uint TES_Server::getPingDelta() { return _pingDelta; }
 
-void TES_Server::pingWait(uint pingWait)
+void TES_Server::setPingWait(uint pingWait)
 {
     _pingWait = pingWait;
     if (_pingDelta > 0 && _pingWait > 0 && _failsToDisc > 0)
         _ws->enableHeartbeat(_pingDelta, _pingWait, _failsToDisc);
 }
 
-uint TES_Server::pingWait() { return _pingWait; }
+uint TES_Server::getPingWait() { return _pingWait; }
 
-void TES_Server::failsToDisc(uint failsToDisc)
+void TES_Server::setFailsToDisc(uint failsToDisc)
 {
     _failsToDisc = failsToDisc;
     if (_pingDelta > 0 && _pingWait > 0 && _failsToDisc > 0)
         _ws->enableHeartbeat(_pingDelta, _pingWait, _failsToDisc);
 }
 
-uint TES_Server::failsToDisc() { return _failsToDisc; }
+uint TES_Server::getFailsToDisc() { return _failsToDisc; }
 
 void TES_Server::printList()
 {

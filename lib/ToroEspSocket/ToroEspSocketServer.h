@@ -42,6 +42,8 @@ private:
     bool _connectEventToggle = false;
     TES_SEvent _disconnectEvent;
     bool _disconnectEventToggle = false;
+    TES_SEvent _identifyEvent;
+    bool _identifyEventToggle = false;
 
     std::map<DeviceUID, uint8_t> _cDevices;
 
@@ -64,6 +66,7 @@ public:
     void addEventListener(String tag, TES_SEvent event);
     void addOnConnectListener(TES_SEvent event);
     void addOnDisconnectListener(TES_SEvent event);
+    void addOnIdentificationListener(TES_SEvent event);
 
     void sendMsg(String group, uint index, String tag, std::vector<String> msg);
     void sendMsg(String group, uint index, String tag, String msg);
@@ -75,14 +78,14 @@ public:
     void regroupDevice(DeviceUID device, String newGroup);
 
     IPAddress getIP();
-    uint connectedDevices(String group);
-    uint connectedDevices();
-    void pingDelta(uint pingDelta);
-    uint pingDelta();
-    void pingWait(uint pingWait);
-    uint pingWait();
-    void failsToDisc(uint failsToDisc);
-    uint failsToDisc();
+    uint getConnectedDevices(String group);
+    uint getConnectedDevices();
+    void setPingDelta(uint pingDelta);
+    uint getPingDelta();
+    void setPingWait(uint pingWait);
+    uint getPingWait();
+    void setFailsToDisc(uint failsToDisc);
+    uint getFailsToDisc();
 
     void printList();
 };
@@ -106,8 +109,7 @@ inline void _eventHandler(TES_Server *th, uint8_t num, WStype_t type, uint8_t *p
         std::vector<uint8_t> toReAddNums;
 
         toDelete.push_back(it);
-        it = th->_cDevices.begin();
-        for (; it != th->_cDevices.end(); it++)
+        for (it = th->_cDevices.begin(); it != th->_cDevices.end(); it++)
         {
             if (it->first.group == dGroup && it->first.index > dIndex)
             {
@@ -128,7 +130,7 @@ inline void _eventHandler(TES_Server *th, uint8_t num, WStype_t type, uint8_t *p
 
         if (th->_disconnectEventToggle)
         {
-            th->_disconnectEvent((int)num, String(payload, length));
+            th->_disconnectEvent((int)num, dGroup);
         }
     }
     break;
@@ -155,9 +157,15 @@ inline void _eventHandler(TES_Server *th, uint8_t num, WStype_t type, uint8_t *p
 
         if (tag == "IdEnTiFiEr")
         {
-            uint index = th->connectedDevices(msg);
-            th->_cDevices.insert(std::pair<DeviceUID, uint8_t>(DeviceUID{msg, index}, num));
-            th->_ws->sendTXT(num, "InDeX=" + String(index));
+            uint nIndex = th->getConnectedDevices(msg);
+            th->_cDevices.insert(std::pair<DeviceUID, uint8_t>(DeviceUID{msg, nIndex}, num));
+            th->_ws->sendTXT(num, "InDeX=" + String(nIndex));
+
+            if (th->_identifyEventToggle)
+            {
+                th->_identifyEvent(nIndex, msg);
+            }
+
             break;
         }
 
