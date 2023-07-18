@@ -1,6 +1,3 @@
-![github-header-image](https://user-images.githubusercontent.com/90210751/209707943-5e7ef05a-122e-4542-8ded-95f59bcb5711.png)
-
-
 # ToroEspSocket
 **All-in-one web-socket library for the ESP32**.
 
