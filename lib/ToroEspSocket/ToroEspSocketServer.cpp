@@ -152,7 +152,7 @@ void TES_Server::broadcastMsg(String group, String tag, std::vector<String> msg)
     }
     // MAYBE TODO: delete last "!"
 
-    for (auto it = _cDevices.find(DeviceUID{tag, 0}); it != _cDevices.end(); it++)
+    for (auto it = _cDevices.find(DeviceUID{group, 0}); it != _cDevices.end(); it++)
     {
         uint8_t num = it->second;
         _ws->sendTXT(num, payload);
@@ -162,7 +162,7 @@ void TES_Server::broadcastMsg(String group, String tag, std::vector<String> msg)
 void TES_Server::broadcastMsg(String group, String tag, String msg)
 {
     String payload = tag + "=" + msg;
-    for (auto it = _cDevices.find(DeviceUID{tag, 0}); it != _cDevices.end(); it++)
+    for (auto it = _cDevices.find(DeviceUID{group, 0}); it != _cDevices.end(); it++)
     {
         uint8_t num = it->second;
         _ws->sendTXT(num, payload);
