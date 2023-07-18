@@ -16,9 +16,19 @@ struct DeviceUID
     String group;
     uint index;
 
+    bool operator=(const DeviceUID &cmp) const
+    {
+        return group == cmp.group;
+    }
+
     bool operator<(const DeviceUID &cmp) const
     {
-        return (group.charAt(0) * 100 + group.charAt(1) * 10 + index) < (cmp.group.charAt(0) * 100 + cmp.group.charAt(1) * 10 + cmp.index);
+        for (int i = 0; i < group.length(); i++)
+        {
+            if (group[i] != cmp.group[i])
+                return group[i] < cmp.group[i];
+        }
+        return index < cmp.index;
     }
 
     void setIndex(uint nIndex) { index = nIndex; }
@@ -130,7 +140,7 @@ inline void _eventHandler(TES_Server *th, uint8_t num, WStype_t type, uint8_t *p
 
         if (th->_disconnectEventToggle)
         {
-            th->_disconnectEvent((int)num, dGroup);
+            th->_disconnectEvent((int)dIndex, dGroup);
         }
     }
     break;
