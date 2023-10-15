@@ -7,7 +7,7 @@
 
 #include <WiFi.h>
 #include <esp_wifi.h>
-#include "WebSocketBase/WebSocketsServer.h"
+#include <WebSocketsServer.h>
 
 typedef std::function<void(int index, String msg)> TES_SEvent;
 
