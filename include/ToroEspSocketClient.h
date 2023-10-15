@@ -7,7 +7,7 @@
 
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
-#include <WebSocketsClient.h>
+#include "WebSocketBase/WebSocketsClient.h"
 
 typedef std::function<void(String msg)> TES_CEvent;
 
