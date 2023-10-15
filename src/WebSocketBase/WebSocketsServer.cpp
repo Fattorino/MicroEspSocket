@@ -22,8 +22,8 @@
  *
  */
 
-#include "WebSockets.h"
-#include "WebSocketsServer.h"
+#include "WebSocketBase/WebSockets.h"
+#include "WebSocketBase/WebSocketsServer.h"
 
 WebSocketsServerCore::WebSocketsServerCore(const String &origin, const String &protocol)
 {

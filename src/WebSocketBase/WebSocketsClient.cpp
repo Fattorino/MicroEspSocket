@@ -22,8 +22,8 @@
  *
  */
 
-#include "WebSockets.h"
-#include "WebSocketsClient.h"
+#include "WebSocketBase/WebSockets.h"
+#include "WebSocketBase/WebSocketsClient.h"
 
 WebSocketsClient::WebSocketsClient()
 {
