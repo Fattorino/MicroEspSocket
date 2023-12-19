@@ -1,9 +1,8 @@
-# ToroEspSocket
+# MicroEspSocket
 **All-in-one web-socket library for the ESP32**.
 
-ToroEspSocket is based on a modified version of [arduinoWebSockets](https://github.com/Links2004/arduinoWebSockets). \
+MicroEspSocket is based on a modified version of [arduinoWebSockets](https://github.com/Links2004/arduinoWebSockets). \
 The library manages both client ```TES_Client``` and server ```TES_Server```.
-> In the future I'll add support for the ESP8266.
 
 ## Features
 - Automatic management of connected clients
@@ -11,8 +10,13 @@ The library manages both client ```TES_Client``` and server ```TES_Server```.
 - WiFi and web-socket handling in a single place
 
 ## Implementation (In a PlatformIO project)
+### Quick:
+    lib_deps = 
+	    . . .
+	    https://github.com/Fattorino/ToroEspSocket.git#3.0.0
+### Manual:
 1. Download the latest .zip from the release page;
-2. Copy the *ToroEspSockets* folder into the lib folder of your PlatformIO project;
+2. Copy the *MicroEspSockets* folder into the lib folder of your PlatformIO project;
 3. ``` #include <ToroEspSocketServer> ``` or/end ``` #include <ToroEspSocketClient> ```
 
 ## TES_Server example code
@@ -87,14 +91,13 @@ void loop()
 }
 ```
 
-## Example code interactions
+## Example code explained
 1. Every five seconds, the server will broadcast a  message with the tag ``` demoEvent ``` to every TES_Client connected;
 2. Clients receive the message, the tag ``` demoEvent ``` gets decoded so the related function ``` onDemoEvent ``` gets called;
 3. The client sends a message with the tag ``` demoEvent ``` to the server;
 4. The server receives the message, the tag ``` demoEvent ``` gets decoded so the related function ``` onDemoEvent ``` gets called;
 5. Inside the function ``` onDemoEvent ``` (server side), the content of the message gets printed.
 
-&nbsp;
 
 ## Recommendations
 To learn more about: the group system used to manage clients, the overall working idea of the library and for a detailed explanation of every function please refer to the wiki.
