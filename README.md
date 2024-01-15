@@ -97,9 +97,3 @@ void loop()
 3. The client sends a message with the tag ``` demoEvent ``` to the server;
 4. The server receives the message, the tag ``` demoEvent ``` gets decoded so the related function ``` onDemoEvent ``` gets called;
 5. Inside the function ``` onDemoEvent ``` (server side), the content of the message gets printed.
-
-
-## Recommendations
-To learn more about: the group system used to manage clients, the overall working idea of the library and for a detailed explanation of every function please refer to the wiki.
-
-***Wiki coming soon!***
